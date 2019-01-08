@@ -20,9 +20,12 @@ script:
 - hexo generate
 
 deploy:
+  skip_cleanup: true
   provider: pages
   local-dir: public
   github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   target-branch: master
   email: haoxiangzhao527@gmail.com
   name: hxzhao527
+  on:
+    branch: hexo
