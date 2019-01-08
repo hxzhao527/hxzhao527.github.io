@@ -13,7 +13,7 @@ before_install:
 install:
 - npm install
 - git clone https://github.com/giscafer/hexo-theme-cafe.git themes/cafe
-- cp theme_config.yml theme/cafe/_config.yml
+- cp theme_config.yml themes/cafe/_config.yml
 
 script:
 - hexo clean
