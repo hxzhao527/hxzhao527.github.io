@@ -1,0 +1,27 @@
+language: node_js
+
+node_js:
+  - "v11.6.0"
+
+branches:
+  only:
+  - hex
+
+before_install:
+- npm install -g hexo-cli
+
+install:
+- npm install
+- git clone https://github.com/giscafer/hexo-theme-cafe.git themes/cafe
+
+script:
+- hexo clean
+- hexo generate
+
+deploy:
+  provider: pages
+  local-dir: public
+  github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+  target-branch: master
+  email: haoxiangzhao527@gmail.com
+  name: hxzhao527
