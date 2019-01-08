@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>[翻译] gRPC 负载均衡 | L很失败L的Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言这是gRPC 官方博客的文章, 由 makdharma 大佬发布于2017.6.15, 原文见gRPC Load Balancing.最近在看gRPC, 看到负载,服务发现这块, 顺路搜了一下就发现了这篇, 内容不错, 翻译学习加留存. 正文无论出于什么目的, 一个大规模的gRPC部署中, 一个服务一般都会有若干个实例, 同时还有着大量的调用端.但是单个server实例, 其运算负载能力是有限">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[翻译] gRPC 负载均衡">
+<meta property="og:url" content="https://hxzhao527.github.io/2018/11/12/翻译-gRPC-负载均衡/index.html">
+<meta property="og:site_name" content="L很失败L的Blog">
+<meta property="og:description" content="前言这是gRPC 官方博客的文章, 由 makdharma 大佬发布于2017.6.15, 原文见gRPC Load Balancing.最近在看gRPC, 看到负载,服务发现这块, 顺路搜了一下就发现了这篇, 内容不错, 翻译学习加留存. 正文无论出于什么目的, 一个大规模的gRPC部署中, 一个服务一般都会有若干个实例, 同时还有着大量的调用端.但是单个server实例, 其运算负载能力是有限">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://hxzhao527.github.io/images/翻译-gRPC-负载均衡/proxy.png">
+<meta property="og:image" content="https://hxzhao527.github.io/images/翻译-gRPC-负载均衡/client.png">
+<meta property="og:image" content="https://hxzhao527.github.io/images/翻译-gRPC-负载均衡/client2.png">
+<meta property="og:updated_time" content="2019-01-08T12:11:18.640Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[翻译] gRPC 负载均衡">
+<meta name="twitter:description" content="前言这是gRPC 官方博客的文章, 由 makdharma 大佬发布于2017.6.15, 原文见gRPC Load Balancing.最近在看gRPC, 看到负载,服务发现这块, 顺路搜了一下就发现了这篇, 内容不错, 翻译学习加留存. 正文无论出于什么目的, 一个大规模的gRPC部署中, 一个服务一般都会有若干个实例, 同时还有着大量的调用端.但是单个server实例, 其运算负载能力是有限">
+<meta name="twitter:image" content="https://hxzhao527.github.io/images/翻译-gRPC-负载均衡/proxy.png">
+  
+    <link rel="alternate" href="/atom.xml" title="L很失败L的Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    
+    <div id="header-inner" class="inner">
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://hxzhao527.github.io"></form>
+      </div>
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      
+    </div>
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">L很失败L的Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">记录</a>
+        </h2>
+      
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-翻译-gRPC-负载均衡" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/11/12/翻译-gRPC-负载均衡/" class="article-date">
+  <time datetime="2018-11-12T18:58:26.000Z" itemprop="datePublished">2018-11-12</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      [翻译] gRPC 负载均衡
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- Table of Contents -->
+        
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这是gRPC 官方博客的文章, 由 makdharma 大佬发布于2017.6.15, 原文见<a href="https://grpc.io/blog/loadbalancing" target="_blank" rel="noopener">gRPC Load Balancing</a>.最近在看gRPC, 看到负载,服务发现这块, 顺路搜了一下就发现了这篇, 内容不错, 翻译学习加留存.</p>
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><p>无论出于什么目的, 一个大规模的gRPC部署中, 一个服务一般都会有若干个实例, 同时还有着大量的调用端.但是单个server实例, 其运算负载能力是有限的. 负载均衡就是用来高效地将来自客户端的请求分发到可用的服务端, 以达到负载能力的提升.</p>
+<h2 id="为什么使用gRPC"><a href="#为什么使用gRPC" class="headerlink" title="为什么使用gRPC?"></a>为什么使用gRPC?</h2><p>gRPC基于<a href="https://developers.google.com/web/fundamentals/performance/http2/?hl=zh-cn" target="_blank" rel="noopener">HTTP/2</a>构建.<br>(译: <a href="https://platformlab.stanford.edu/Seminar%20Talks/gRPC.pdf" target="_blank" rel="noopener">gRPC Design and Implementation</a>有介绍为啥选用http2). HTTP/2属于应用层(L7), 运行在传输层(TCP, L4)之上, 当然更在网络层(IP, L3)之上.(译: <a href="https://en.wikipedia.org/wiki/Network_layer" target="_blank" rel="noopener">网络分层</a>). 沾了HTTP/2协议的光, gRPC有着许多传统基于HTTP/REST/JSON通讯不具备的<a href="https://http2.github.io/faq/#why-is-http2-binary" target="_blank" rel="noopener">优势</a>, 比如</p>
+<ol>
+<li>二进制通讯(来自HTTP/2)</li>
+<li>多路复用(来自HTTP/2)</li>
+<li>请求/返回头压缩(来自HTTP/2)</li>
+<li>强类型定义, 便于约定服务和消息体(来自<a href="https://developers.google.com/protocol-buffers/" target="_blank" rel="noopener">Protobuf</a>)</li>
+<li>多语言支持<br>此外, gRPC还能与诸如服务发现, 名字解析, 负载均衡, 路由追踪和监控等生态组件无缝整合.<h2 id="负载均衡策略"><a href="#负载均衡策略" class="headerlink" title="负载均衡策略"></a>负载均衡策略</h2><h3 id="代理模式还是客户端"><a href="#代理模式还是客户端" class="headerlink" title="代理模式还是客户端?"></a>代理模式还是客户端?</h3><strong>注:</strong>代理模式的负载, 在某些场合也称为服务端负载均衡.<br>使用代理模式还是客户端负载均衡是架构层面一个主要的问题. 在基于代理的负载均衡模式中, 客户端将RPC调用发给负载均衡器(LB). LB再负责将请求发往可用的目标server. LB负责监控后端server的存活并实现一个请求分发算法. 客户端对实际server无感知.这也允许客户端可以是不受信的. 这种架构, 通常用于服务调用来自公网的面向客户的服务.如下图所示, 客户端将请求发到LB(#1).LB将流量发往对应的后端server(#2). Server日常返回自己的状态给LB(#3, 译: 这个状态反馈,可以是主动的, 可以是被动的,由具体实现定)<br><img src="/images/翻译-gRPC-负载均衡/proxy.png" alt="proxy"><br>客户端负载模式下, 客户端需要知道到底有多少server可用, 然后每次RPC时再选取一个实际调用.客户端负责记录server的状态, 并实现负载均衡的算法. 比较简单常见的就是<a href="https://en.wikipedia.org/wiki/Round-robin_scheduling" target="_blank" rel="noopener">round-robin</a>轮巡, 也不用考虑server实际能力, 简单的下一个就好了.如下图所示, 客户端将请求发往特定的后端(#1). 通常, server会将自身状态和RPC的结果一并返给client. 然后client更新server的状态, 以便下次负载计算.<br><img src="/images/翻译-gRPC-负载均衡/client.png" alt="client"><br>这两种模式各有利弊</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>服务端模式</th>
+<th>客户端模式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>优<br>点</td>
+<td>1. 简化客户端开发<br>2. 客户端对服务端无感知<br>3. 可以为不受信的客户端提供服务</td>
+<td>* 性能高(没有额外的转发消耗)</td>
+</tr>
+<tr>
+<td>缺<br>点</td>
+<td>1. LB增加了数据传输路程<br>2. 延迟增加v3. LB的吞吐量可能限制服务扩展伸缩</td>
+<td>1. 客户端变得复杂<br>2. 客户端需要自己处理server的状态<br>3. 自己实现均衡算法<br>4. 多语言和维护成本增加<br>5. 客户端需要是受信的, 或者客户端侧的LB处理受信问题</td>
+</tr>
+</tbody>
+</table>
+<h3 id="服务端负载策略"><a href="#服务端负载策略" class="headerlink" title="服务端负载策略"></a>服务端负载策略</h3><p>服务端的负载, 可以是<a href="https://www.nginx.com/resources/glossary/layer-4-load-balancing/" target="_blank" rel="noopener">传输层</a>的(L3/L4), 也可以是应用层的(L7).<br>传输层负载,LB直接关闭一个TCP连接, 再与新选中的serveri建立连接就好了.至于应用层的数据(HTTP/2和gRPC帧), LB就从与client的连接简单的拷贝到与server的连接.L3/L4层的LB只做很少的处理, 相较L7而言, 延迟会更小, 消耗资源会更少.<br>应用层(L7)的负载均衡, LB负责接收和h处理HTTP/2请求. LB同时可以根据请求的内容决定u分发到哪个server.比如http请求header中的<a href="https://en.wikipedia.org/wiki/HTTP_cookie#Session_cookie" target="_blank" rel="noopener">session cookie</a>.<br>一旦LB选定了后端server, 就与其建立一个HTTP/2连接,然后转发由客户端发来的请求.<br>这两种策略, 也是各有利弊, 不同场合,不同选择.</p>
+<table>
+<thead>
+<tr>
+<th>场合</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RPC server经常变动</td>
+<td>L7</td>
+</tr>
+<tr>
+<td>存储或者计算亲和性很重要时</td>
+<td>L7结合类似cookies的方法</td>
+</tr>
+<tr>
+<td>资源消耗最小</td>
+<td>L3/L4</td>
+</tr>
+<tr>
+<td>延迟至关重要时</td>
+<td>L3/L4</td>
+</tr>
+</tbody>
+</table>
+<h3 id="客户端负载策略"><a href="#客户端负载策略" class="headerlink" title="客户端负载策略"></a>客户端负载策略</h3><h4 id="胖客户端"><a href="#胖客户端" class="headerlink" title="胖客户端"></a>胖客户端</h4><p><strong>胖客户端</strong>, 就如名字一样形象, 负载策略,server信息全交由client处理.这样的客户端一般还会通过类库整合服务发现, 名字解析, 配置中心. 因为什么都有, 也因此得名:胖.</p>
+<h4 id="外部负载均衡器"><a href="#外部负载均衡器" class="headerlink" title="外部负载均衡器"></a>外部负载均衡器</h4><p>与server端负载类似, 存在一个外部的LBserver, 但是它只负责”指路”, 不负责”带路”. 客户端通过查询这个特殊的LB拿到最佳的server去调用. 记录server状态, 实现LB算法这种繁重的工作都放在均衡器来处理. 不过在有外置LB的情况下, 客户端侧还是能自己实现一些简单的负载算法. gRPC就是使用了这种模型. 具体细节见<a href="https://github.com/grpc/grpc/blob/master/doc/load-balancing.md" target="_blank" rel="noopener">文档</a>.</p>
+<p>下图展示的就是这个模型. 客户端从LB拿到至少一个server地址(#1). 然后自己根据地址直接向server发起RPC请求(#2). server日常将自己的状态上报给LB(#3).LB自己在与其他诸如名字解析服务发现等组件通讯(#4).<br><img src="/images/翻译-gRPC-负载均衡/client2.png" alt="clinet-lookaside"></p>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><p>根据具体的部署情况, 我们建议</p>
+<table>
+<thead>
+<tr>
+<th>场合和现有部署形式</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客户端和服务端之间流量很大<br>客户端是受信的</td>
+<td>胖客户端<br>客户端侧负载,比如ZK/etcd/consul/Eureka</td>
+</tr>
+<tr>
+<td>传统部署形式, 反向代理<br>客户端和服务端之间需要受信连接</td>
+<td>代理模式<br>如果在用GCP, GCLB提供L3/L4负载<br>haproxy(L3/L4)<br><a href="https://www.nginx.com/blog/nginx-1-13-10-grpc/" target="_blank" rel="noopener">nginx 1.13.10</a><br>如果需要session stickiness, 使用<a href="https://www.envoyproxy.io/" target="_blank" rel="noopener">Envoy</a>做L7代理</td>
+</tr>
+<tr>
+<td>微服务架构<br>高性能(低延迟, 大流量)<br>客户端可以不受信</td>
+<td>外置负载均衡器<br>基于gRPC-LB协议的客户端LB</td>
+</tr>
+<tr>
+<td>使用服务网格比如<a href="https://linkerd.io/" target="_blank" rel="noopener">Linkerd</a>, <a href="https://istio.io/zh/" target="_blank" rel="noopener">Istio</a></td>
+<td>服务网格<br>使用<a href="https://istio.io/zh/" target="_blank" rel="noopener">Istio</a>内置的LB或者<a href="https://www.envoyproxy.io/" target="_blank" rel="noopener">Envoy</a></td>
+</tr>
+</tbody>
+</table>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://hxzhao527.github.io/2018/11/12/翻译-gRPC-负载均衡/" data-id="cjqnpskpg000dejmq0i5z92c5" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+ <script src="/jquery/jquery.min.js"></script>
+  <div id="random_posts">
+    <h2>推荐文章</h2>
+    <div class="random_posts_ul">
+      <script>
+          var random_count =4
+          var site = {BASE_URI:'/'};
+          function load_random_posts(obj) {
+              var arr=site.posts;
+              if (!obj) return;
+              // var count = $(obj).attr('data-count') || 6;
+              for (var i, tmp, n = arr.length; n; i = Math.floor(Math.random() * n), tmp = arr[--n], arr[n] = arr[i], arr[i] = tmp);
+              arr = arr.slice(0, random_count);
+              var html = '<ul>';
+            
+              for(var j=0;j<arr.length;j++){
+                var item=arr[j];
+                html += '<li><strong>' + 
+                item.date + ':&nbsp;&nbsp;<a href="' + (site.BASE_URI+item.uri) + '">' + 
+                (item.title || item.uri) + '</a></strong>';
+                if(item.excerpt){
+                  html +='<div class="post-excerpt">'+item.excerpt+'</div>';
+                }
+                html +='</li>';
+                
+              }
+              $(obj).html(html + '</ul>');
+          }
+          $('.random_posts_ul').each(function () {
+              var c = this;
+              if (!site.posts || !site.posts.length){
+                  $.getJSON(site.BASE_URI + 'js/posts.js',function(json){site.posts = json;load_random_posts(c)});
+              } 
+               else{
+                load_random_posts(c);
+              }
+          });
+      </script>
+    </div>
+  </div>
+
+    
+<nav id="article-nav">
+  
+    <a href="/2018/12/29/ThreadLocal-java/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          ThreadLocal
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/10/22/使用二进制形式发布go-package/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">由二进制形式发布go package看go如何编译</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+ 
+     
+  <div class="comments" id="comments">
+    
+     
+       
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
+    
+       
+      
+      
+  </div>
+ 
+  
+
+</section>
+           
+    <aside id="sidebar">
+  
+    
+
+  
+    
+    <div class="widget-wrap">
+    
+      <div class="widget" id="toc-widget-fixed">
+      
+        <strong class="toc-title">文章目录</strong>
+        <div class="toc-widget-list">
+              <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#正文"><span class="toc-number">2.</span> <span class="toc-text">正文</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么使用gRPC"><span class="toc-number">2.1.</span> <span class="toc-text">为什么使用gRPC?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#负载均衡策略"><span class="toc-number">2.2.</span> <span class="toc-text">负载均衡策略</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#代理模式还是客户端"><span class="toc-number">2.2.1.</span> <span class="toc-text">代理模式还是客户端?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#服务端负载策略"><span class="toc-number">2.2.2.</span> <span class="toc-text">服务端负载策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#客户端负载策略"><span class="toc-number">2.2.3.</span> <span class="toc-text">客户端负载策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#胖客户端"><span class="toc-number">2.2.3.1.</span> <span class="toc-text">胖客户端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#外部负载均衡器"><span class="toc-number">2.2.3.2.</span> <span class="toc-text">外部负载均衡器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最佳实践"><span class="toc-number">2.3.</span> <span class="toc-text">最佳实践</span></a></li></ol></li></ol>
+          </div>
+      </div>
+    </div>
+
+  
+    
+
+  
+    
+  
+    
+  
+    
+
+  
+    
+  
+</aside>
+
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-left">
+      &copy; 2014 - 2019 Haoxiang Zhao&nbsp;|&nbsp;
+      主题 <a href="https://github.com/giscafer/hexo-theme-cafe/" target="_blank">Cafe</a>
+    </div>
+     <div id="footer-right">
+      联系方式&nbsp;|&nbsp;haoxiangzhao@outlook.com
+    </div>
+  </div>
+</footer>
+ <script src="/jquery/jquery.min.js"></script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+    <a href="/about" class="mobile-nav-link">关于</a>
+  
+</nav>
+    <img class="back-to-top-btn" src="/images/fly-to-top.png"/>
+<script>
+// Elevator script included on the page, already.
+window.onload = function() {
+  var elevator = new Elevator({
+    selector:'.back-to-top-btn',
+    element: document.querySelector('.back-to-top-btn'),
+    duration: 1000 // milliseconds
+  });
+}
+</script>
+      
+
+  
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "e2fb4051c49842688ce669e634bc983f",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
+    
+
+  
+
+
+
+
+
+
+
+<!-- author:forvoid begin -->
+<!-- author:forvoid begin -->
+
+<!-- author:forvoid end -->
+
+<!-- author:forvoid end -->
+
+
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      })
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      })
+    </script>
+    <script type="text/javascript" src="https://cdn.rawgit.com/mathjax/MathJax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+ <script src="/js/is.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+<script src="/js/elevator.js"></script>
+  </div>
+</body>
+</html>
