@@ -1,0 +1,486 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>足迹</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> About</a></li><li class="chapter-item expanded "><a href="env/index.html"><strong aria-hidden="true">2.</strong> 环境搭建</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="env/rust.html"><strong aria-hidden="true">2.1.</strong> IDE配置--Rust</a></li><li class="chapter-item expanded "><a href="env/cpp.html"><strong aria-hidden="true">2.2.</strong> IDE配置--C/C++</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">足迹</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="杂记"><a class="header" href="#杂记">杂记</a></h1>
+<blockquote>
+<p>随便记录一下.</p>
+</blockquote>
+<p>使用一些笔记软件, 如<a href="https://www.wolai.com/signup?invitation=QLJPH2P">Wolai</a>, 虽然能做到同步, 能生成关系图. 但一个是收费, 一个是存在崩溃的风险.<br />
+思来想去, 还是使用github稳定些.</p>
+<p>慢慢的将已经稳定的(不会大改动)的笔记搬运过来.</p>
+<p>项目使用<a href="https://github.com/rust-lang/mdBook">mdbook</a>构建, 同时添加了以下插件</p>
+<ul>
+<li><a href="https://github.com/badboy/mdbook-toc">mdbook-toc</a></li>
+<li><a href="https://github.com/badboy/mdbook-mermaid">mdbook-mermaid</a></li>
+</ul>
+<p>同时使用<a href="https://docs.github.com/en/actions">GitHub Actions</a>实现自动构建和发布.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="环境搭建"><a class="header" href="#环境搭建">环境搭建</a></h1>
+<ul>
+<li>系统使用<a href="https://archlinux.org/">Archlinux</a> 或者 <a href="https://manjaro.org/">manjaro</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ide-配置----rust"><a class="header" href="#ide-配置----rust">IDE 配置 -- Rust</a></h1>
+<ul>
+<li><a href="env/rust.html#%E6%A6%82%E8%BF%B0">概述</a></li>
+<li><a href="env/rust.html#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="env/rust.html#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE">基本配置</a></li>
+<li><a href="env/rust.html#debug">debug</a></li>
+<li><a href="env/rust.html#coverage">coverage</a>
+<ul>
+<li><a href="env/rust.html#%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90lcovinfo">自动生成lcov.info</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="概述"><a class="header" href="#概述">概述</a></h2>
+<p>除了能自动补全, 还能测试, 还能覆盖率.</p>
+<h2 id="安装"><a class="header" href="#安装">安装</a></h2>
+<ul>
+<li>主体: <a href="https://code.visualstudio.com/" title="VSCode">VSCode</a></li>
+<li>插件:
+<ul>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=matklad.rust-analyzer" title="rust-analyzer">rust-analyzer</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb" title="CodeLLDB">CodeLLDB</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=serayuzgur.crates" title="crates">crates</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=bungcip.better-toml" title="Better TOML">Better TOML</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters" title="Coverage Gutters">Coverage Gutters</a></li>
+</ul>
+</li>
+</ul>
+<p>安装完插件, 基本环境就有了, 自动补全, 测试, run.</p>
+<h2 id="基本配置"><a class="header" href="#基本配置">基本配置</a></h2>
+<pre><code class="language-json">{
+    &quot;rust-analyzer.lens.methodReferences&quot;: true,
+    &quot;rust-analyzer.lens.references&quot;: true,
+    &quot;rust-analyzer.procMacro.enable&quot;: true,
+    &quot;rust-analyzer.hoverActions.references&quot;: true,
+    &quot;rust-analyzer.inlayHints.hideNamedConstructorHints&quot;: true,
+}
+</code></pre>
+<h2 id="debug"><a class="header" href="#debug">debug</a></h2>
+<p>debug需要额外配置一下.</p>
+<pre><code class="language-json">{
+    &quot;rust-analyzer.debug.engine&quot;: &quot;vadimcn.vscode-lldb&quot;,
+    &quot;rust-analyzer.debug.openDebugPane&quot;: true,
+}
+</code></pre>
+<h2 id="coverage"><a class="header" href="#coverage">coverage</a></h2>
+<p>基础的测试, <code>RA</code> 已经支持了. 如果需要 <em>coverage</em> 信息, 还需要额外安装一些工具.<br />
+目前只有 <em>nightly</em> 支持</p>
+<ol>
+<li>
+<p>安装额外工具 <a href="https://github.com/mozilla/grcov" title="grcov">grcov</a>:</p>
+<pre><code class="language-bash">cargo install grcov
+</code></pre>
+</li>
+<li>
+<p>设置<code>rust-toolchain</code>, 参考 <a href="https://rust-lang.github.io/rustup/overrides.html#overrides" title="Overrides">Overrides</a></p>
+<pre><code class="language-toml">[toolchain]
+channel = &quot;nightly&quot;
+components = [ &quot;llvm-tools-preview&quot;, &quot;rust-analyzer&quot;]
+</code></pre>
+</li>
+<li>
+<p>设置 <code>cargo-config</code>, </p>
+<ul>
+<li>参考 <a href="https://doc.rust-lang.org/cargo/reference/config.html#configuration" title="Configuration">Configuration</a></li>
+<li>原理见 <a href="https://doc.rust-lang.org/stable/unstable-book/compiler-flags/instrument-coverage.html#instrument-coverage" title="instrument-coverage">instrument-coverage</a></li>
+<li>这样执行<code>cargo test</code>和<code>cargo build</code> 时自动生成<code>target/coverage/grcov.profraw</code> 文件</li>
+</ul>
+<pre><code class="language-toml">[build]
+rustflags = [&quot;-Cinstrument-coverage&quot;,]
+[env]
+LLVM_PROFILE_FILE = &quot;target/coverage/grcov.profraw&quot;
+</code></pre>
+</li>
+<li>
+<p>利用 <a href="https://github.com/mozilla/grcov" title="grcov">grcov</a> 产出 <em>lcov.info</em> 文件</p>
+<ul>
+<li><code>lcov.info</code> 文件就是覆盖率结果, 可以直接查看, 也可以产出html, 可以上传 <a href="https://about.codecov.io/" title="Codecov">Codecov</a></li>
+<li>至于<code>lcov</code>是啥, 见<a href="https://github.com/linux-test-project/lcov" title="lcov详情">lcov详情</a></li>
+</ul>
+<pre><code class="language-bash">grcov $(find . -name &quot;grcov.profraw&quot; -print) \
+  --branch \
+  --ignore-not-existing \
+  --binary-path ./target/debug/ \
+  -s . \
+  -t lcov \
+  --ignore &quot;/*&quot; \
+  -o target/coverage/lcov.info
+</code></pre>
+</li>
+<li>
+<p>借助[Coverage Gutters](Coverage Gutters) 显示覆盖率</p>
+<ul>
+<li>打开对应文件, 在 状态栏即可看到对应的 覆盖率, 点击可在文件上切换显示
+<img src="env/images/coverage1.png" alt="coverage-1" />
+<img src="env/images/coverage2.png" alt="coverage-2" /></li>
+</ul>
+</li>
+</ol>
+<h3 id="自动生成lcovinfo"><a class="header" href="#自动生成lcovinfo">自动生成lcov.info</a></h3>
+<p>手动生成<code>lcov.info</code> 文件太费事了, 可以监听 <code>target/coverage/grcov.profraw</code> 文件变化, 再自动生成.</p>
+<ol>
+<li>
+<p>安装额外工具: <code>cargo install watchexec-cli</code></p>
+</li>
+<li>
+<p>添加 <a href="https://code.visualstudio.com/docs/editor/tasks#_background-watching-tasks" title="VSCode Task">VSCode Task</a>,</p>
+<pre><code class="language-json">{
+    &quot;version&quot;: &quot;2.0.0&quot;,
+    &quot;tasks&quot;: [
+        {
+            &quot;label&quot;: &quot;watch coverage&quot;,
+            &quot;type&quot;: &quot;shell&quot;,
+            &quot;isBackground&quot;: true,
+            &quot;command&quot;: &quot;~/.cargo/bin/watchexec&quot;,
+            &quot;args&quot;: [
+                &quot;--no-vcs-ignore&quot;,
+                &quot;-w&quot;, &quot;target/coverage/grcov.profraw&quot;,
+                &quot;-e&quot;, &quot;profraw&quot;,
+                &quot;--restart&quot;,
+                &quot;~/.cargo/bin/grcov target/coverage/grcov.profraw --branch --ignore-not-existing --binary-path ./target/debug/ -s . -t lcov --ignore \&quot;/*\&quot; -o target/coverage/lcov.info&quot;
+            ],
+            &quot;problemMatcher&quot;: {
+                &quot;pattern&quot;:[
+                    {
+                        &quot;regexp&quot;: &quot;^error:\\s+(.*)$&quot;,
+                        &quot;file&quot;: 1,
+                        &quot;line&quot;: 0,
+                        &quot;message&quot;: 1
+                    }
+                ],
+            },
+            // 如果需要开启项目后自动启动
+            // 可能会进程泄露, 暂时没有处理好 problemMatcher
+            // &quot;runOptions&quot;: {
+            //     &quot;runOn&quot;: &quot;folderOpen&quot;
+            // },
+            &quot;presentation&quot;: {
+                &quot;echo&quot;: true,
+                &quot;reveal&quot;: &quot;always&quot;,
+                &quot;focus&quot;: false,
+                &quot;panel&quot;: &quot;shared&quot;,
+                &quot;showReuseMessage&quot;: true,
+                &quot;clear&quot;: true
+            }
+        }
+    ]
+}
+</code></pre>
+</li>
+</ol>
+<p>说明:</p>
+<ul>
+<li>只是简单能用</li>
+<li>没有使用 <a href="https://github.com/taiki-e/cargo-llvm-cov" title="cargo-llvm-cov">cargo-llvm-cov</a>, 不想自己改<code>alias</code> , 还有就是 内嵌的 <code>Run test</code> 就不好用了.</li>
+<li>可以用 makefile</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="ide-配置---cc"><a class="header" href="#ide-配置---cc">IDE 配置 - C/C++</a></h1>
+<ul>
+<li><a href="env/cpp.html#%E8%83%8C%E6%99%AF">背景</a></li>
+<li><a href="env/cpp.html#%E7%9B%AE%E6%A0%87">目标</a></li>
+<li><a href="env/cpp.html#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="env/cpp.html#%E7%A4%BA%E4%BE%8B">示例</a>
+<ul>
+<li><a href="env/cpp.html#%E7%A4%BA%E4%BE%8B1---linux-kernel">示例1 - linux-kernel</a></li>
+<li><a href="env/cpp.html#%E7%A4%BA%E4%BE%8B2----levledb">示例2 -- levledb</a></li>
+<li><a href="env/cpp.html#%E7%A4%BA%E4%BE%8B3----postgres">示例3 -- postgres</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="背景"><a class="header" href="#背景">背景</a></h2>
+<p>linux下并没有 <a href="https://visualstudio.microsoft.com/">Visual Studio</a> 这种巨无霸<br />
+而老一辈的程序员又各种推崇 <a href="https://www.vim.org/" title="vim">Vim</a> 这种上古的工具(虽然也不是不能用)<br />
+导致linux下搜索 C/C++的开发环境, 几乎都是 <a href="env/vim">vim</a> + <a href="https://github.com/universal-ctags/ctags">ctags</a> 这种组合, 其中比较有名的应该是在知乎下的<a href="https://www.zhihu.com/question/47691414/answer/373700711">如何在 Linux 下利用 Vim 搭建 C/C++ 开发环境?</a> 的 <a href="https://www.zhihu.com/people/skywind3000">韦易笑</a> 的答案.</p>
+<p>但, 太折腾了. 各种配置参数, 各种不明觉厉的配置和插件, 以及莫名其妙的不兼容.</p>
+<p>因此, 整一个适合自己的, 容易复刻的C/C++ IDE环境, 还是有必要的.</p>
+<h2 id="目标"><a class="header" href="#目标">目标</a></h2>
+<p>平常很少写 c/c++, 多是在看一些库的代码和实现, 因此方便阅读是主要目的.<br />
+而巨硬出的插件<a href="env/"></a>在linux下cpu拉满, 体验太不好.</p>
+<h2 id="安装-1"><a class="header" href="#安装-1">安装</a></h2>
+<blockquote>
+<p>经过一些搜索, 发现了 宝藏文 <a href="https://martins3.github.io/My-Linux-Config/docs/nvim.html">2022 年 vim 的 C/C++ 配置</a>, 虽然也是 vim的配置, 但是给了很大的启发.</p>
+</blockquote>
+<ul>
+<li>主体: 
+<ul>
+<li><a href="https://code.visualstudio.com/" title="VSCode">VSCode</a></li>
+<li><a href="https://github.com/MaskRay/ccls" title="ccls">ccls</a></li>
+<li><a href="https://github.com/rizsotto/Bear" title="Bear">Bear</a></li>
+<li><a href="https://cmake.org/">CMake</a></li>
+</ul>
+</li>
+<li>插件:
+<ul>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=wallenwang.ccls-plus">ccls</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb" title="CodeLLDB">CodeLLDB</a></li>
+</ul>
+</li>
+</ul>
+<p>安装完软件, 在打开具体项目时还需要进行一些设置.</p>
+<p><strong>说明</strong>: 核心是生成一个<a href="env/ccls">ccls</a>能识别的<code>compile_commands.json</code>文件, 文件说明可见 <a href="https://clang.llvm.org/docs/JSONCompilationDatabase.html">JSON Compilation Database Format Specification</a></p>
+<h2 id="示例"><a class="header" href="#示例">示例</a></h2>
+<h3 id="示例1---linux-kernel"><a class="header" href="#示例1---linux-kernel">示例1 - <a href="https://www.kernel.org/">linux-kernel</a></a></h3>
+<ol>
+<li>
+<p>拉取代码</p>
+<ul>
+<li>可以使用国内镜像</li>
+</ul>
+<pre><code class="language-bash">git clone git@github.com:torvalds/linux.git
+</code></pre>
+</li>
+<li>
+<p>使用<code>v5.4</code>版本</p>
+<ul>
+<li>5.0以上的就行, 主要是偷懒</li>
+</ul>
+<pre><code class="language-bash">cd linux
+git checkout v5.4
+</code></pre>
+</li>
+<li>
+<p>构建项目</p>
+<ul>
+<li>毕竟有一些宏是不是生效, 环境变量是怎样的, 只有构建了才知道</li>
+<li>这里编译器用了clang, 也可以用gcc</li>
+</ul>
+<pre><code class="language-bash">make CC=clang defconfig
+make CC=clang -j $(nproc)
+</code></pre>
+</li>
+<li>
+<p>生成 <code>compile_commands.json</code></p>
+<pre><code class="language-bash">./scripts/gen_compile_commands.py #5系列的版本有脚本gen_compile_commands.py 不然就用bear自己生成
+</code></pre>
+</li>
+<li>
+<p>用 vscode 打开项目, 等待一小会的加载, 即可享受丝滑体验
+<img src="env/images/linux-1.png" alt="linux1" />
+<img src="env/images/linux-2.png" alt="linux2" /></p>
+</li>
+</ol>
+<h3 id="示例2----levledb"><a class="header" href="#示例2----levledb">示例2 -- levledb</a></h3>
+<ol>
+<li>
+<p>拉取代码</p>
+<pre><code class="language-bash">git clone git@github.com:google/leveldb.git
+</code></pre>
+</li>
+<li>
+<p>构建</p>
+<pre><code class="language-bash">cd leveldb
+git submodule init
+git submodule update
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=on .
+cmake --build .
+</code></pre>
+</li>
+<li>
+<p>如果使用 <a href="env/VSCode">VSCode</a>, 在项目下添加如下配置</p>
+<pre><code class="language-json">{
+    &quot;cmake.configureArgs&quot;: [
+        &quot;-DDCMAKE_EXPORT_COMPILE_COMMANDS=ON&quot;
+    ],
+}
+</code></pre>
+</li>
+<li>
+<p>这样会在项目的 <code>build</code> 目录中生成 <code>compile_commands.json</code></p>
+<ul>
+<li>需要修改 ccls 插件配置, 让它找到这个文件</li>
+</ul>
+<pre><code class="language-json">{
+    &quot;ccls.misc.compilationDatabaseDirectory&quot;: &quot;build&quot;
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="示例3----postgres"><a class="header" href="#示例3----postgres">示例3 -- postgres</a></h3>
+<ol>
+<li>
+<p>拉取代码</p>
+<pre><code class="language-bash">git clone git@github.com:postgres/postgres.git
+</code></pre>
+</li>
+<li>
+<p>构建</p>
+<pre><code class="language-bash">cd postgres
+./configure
+bear -- make -j `nproc`
+</code></pre>
+</li>
+<li>
+<p>这样使用 <a href="env/Bear">Bear</a>生成了<code>compile_commands.json</code></p>
+</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            MathJax.Hub.Register.StartupHook('End', function() {
+                window.setTimeout(window.print, 100);
+            });
+        });
+        </script>
+    </body>
+</html>
